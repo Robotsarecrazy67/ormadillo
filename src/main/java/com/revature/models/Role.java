@@ -1,8 +1,4 @@
 package com.revature.models;
 
+// Enum for the role of the user account
 public enum Role { Admin, Employee, Customer }
-
-/*
- * It's important that the casing (upper/lower) of these variables
- * is exactly the same as the how the ENUMS are cased in our DB.
- */

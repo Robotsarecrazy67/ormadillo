@@ -25,52 +25,35 @@ import com.revature.App;
  * 
  *
  */
-
-
-// think about this as our ConnectionUtil.java...but on steroids.....
-// we need to use a special library that gives the ability to create a POOL of connections, so that we can 
-// perform multiple operations on the database at once 
 public class ConnectionPool {
 
-	/**
-	 * We will use this class to supply general database vredentials and attain 
-	 * an object called GenericObjectPool
-	 * 
-	 * gPool is a special object that holds all the connections to our databse at once
-	 * 
-	 * Having a connection pool drastically increases performance whenever  we perform a CRUD operation
-	 * on the Database 
-	 */
-	
-	// if you were doing this in your own project, or in a REAL application, use the applications.properties file
-	// and the Properties object in Java which you use to READ from that file and supply the credentials
+	// Initialize a logger
 	private static Logger logger = Logger.getLogger(ConnectionPool.class);
-	private String JDBC_DRIVER = "org.postgresql.Driver";
+	private String JDBC_DRIVER;
 	private String JDBC_DB_URL;
 	private String JDBC_USER;
 	private String JDBC_PASS;
-	
-	// REMEMBER you typically add the above ^ properties to an application.properties file which you .gitgnore!!!!
-	
 	
 	public ConnectionPool() {
 		// this class is instantiated to read from a properties file 
 		Properties prop = new Properties(); // imported from java.util					
 		try {
 			prop.load(new FileReader("src\\main\\resources\\application.properties"));
-			this.JDBC_DB_URL = prop.getProperty("url"); // this is retrieving the value of the "url" key in application.properties file
-			this.JDBC_USER =  prop.getProperty("username");
-			this.JDBC_PASS = prop.getProperty("password");
+			this.JDBC_DB_URL = prop.getProperty("url"); // Retrieve the URL
+			this.JDBC_USER =  prop.getProperty("username"); // Retrieve the DB Username
+			this.JDBC_PASS = prop.getProperty("password"); // Retrieve the DB Password
+			this.JDBC_DRIVER = prop.getProperty("driver");
 		}
-		catch (FileNotFoundException e) {
+		catch (FileNotFoundException error) {
 			logger.error("Cannot locate application.properties file");
-			e.printStackTrace();
-		} catch (IOException e) {
+			error.printStackTrace();
+		} catch (IOException error) {
 			logger.error("Something wrong with application.properties file");
-			e.printStackTrace();
+			error.printStackTrace();
 		}
 	}
 	
+	// Generated Getters/Setters
 	public String getJDBC_DRIVER() {
 		return JDBC_DRIVER;
 	}
@@ -111,9 +94,6 @@ public class ConnectionPool {
 	}
 
 	private static GenericObjectPool gPool = null;
-	
-	// Apache Cmmons dbcp gives us the functionality to create a connection pool.  But we have to do so
-	// by using its specific class and functionality called GenericObjectPool.
 	
 	public DataSource setUpPool () throws Exception {
 

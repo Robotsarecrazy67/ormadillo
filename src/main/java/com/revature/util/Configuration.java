@@ -1,32 +1,55 @@
 package com.revature.util;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.sql.DataSource;
 
+import org.apache.log4j.Logger;
+
+import com.revature.App;
 import com.revature.annotations.Entity;
 
 /**
  * The purpose of this class is to have the User only provide a few
  * things in order for the ORM to establish a connection and build the tables
  * based on a list of User-Defined classes that the user passes to the ORM to
- * iuntrospect and construct in the DB 
+ * Introspect and construct in the DB 
  *
  */
 public class Configuration {
+	private static Logger logger = Logger.getLogger(Configuration.class);
+	private String packageName;
 	public Configuration() {
+		
+		// this class is instantiated to read from a properties file 
+		Properties prop = new Properties();				
+		try {
+				prop.load(new FileReader("src\\main\\resources\\application.properties"));
+				this.packageName = prop.getProperty("packageName"); // Retrieve the model package name
+			}
+		catch (FileNotFoundException error) {
+			logger.error("Cannot locate application.properties file");
+			error.printStackTrace();
+		} 
+		catch (IOException error) {
+			logger.error("Something wrong with application.properties file");
+			error.printStackTrace();
+		}
+		
 		addAllClassesToORM();
 	}
 	
-	private static final String packageName = "com.revature.models";
-	private static ConnectionPool conPool = new ConnectionPool();
-//	private String dbUrl;
-//	private String dbUsername;
-//	private String dbPassword;
+	
+	private static ConnectionPool conPool = new ConnectionPool(); 
+
 	// this is the list of classes that the user wants our ORM to "scan" aka introspect and build 
 	// as DB objects
 	private List<MetaModel<Class<?>>> metaModelList;
@@ -51,11 +74,10 @@ public class Configuration {
 	public List<MetaModel<Class<?>>> getMetaModels() {
 		
 		// in the case that the metaModelList of the Configuration object is empty, return an empty list.
-		// otherwise, reutrn the metaModelList.
+		// otherwise, return the metaModelList.
 		return (metaModelList == null) ? Collections.emptyList() : metaModelList;
 	}
 	
-	// return a Connection object OR call on a separate class like Connection Util
 	public DataSource getConnection() {
 		try {
 			return conPool.setUpPool();
@@ -66,23 +88,21 @@ public class Configuration {
 		}
 	}
 	
-	public MetaModel<Class<?>> getMetamodel(Class clazz){
+	public MetaModel<Class<?>> getMetamodel(Class<?> clazz){
 		Optional<MetaModel<Class<?>>> option = null;
 	
 		option = metaModelList.stream()
-		//				.forEach(e->System.out.println(e.getSimpleClassName()));
-						.filter(e->!e.getSimpleClassName().equals(clazz.getSimpleName()))
+						.filter(e->e.getSimpleClassName().equals(clazz.getSimpleName()))
 						.findFirst();
 
-		//metaModelList
 		return option.isPresent() ? option.get(): null;
 	}
 	
 	public void addAllClassesToORM() {
 		ClassGrabber cg = new ClassGrabber();
-		Set<Class> classSet = cg.grabAllClasses(packageName);
+		Set<Class<?>> classSet = cg.grabAllClasses(packageName);
 		
-		for(Class clazz: classSet) {	
+		for(Class<?> clazz: classSet) {	
 			if(clazz.getAnnotation(Entity.class) != null) {
 				addAnnotatedClass(clazz);
 			}

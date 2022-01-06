@@ -17,11 +17,11 @@ public class User implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	// class variables
-	@Id(columnName="user_id")
+	@Id(columnName="id")
 	private int id; // represented in our DB as a SERIAL PRIMARY KEY
 	@Column(columnName="username")
 	private String username;
-	@Column(columnName="password")
+	@Column(columnName="pwd")
 	private String password;
 	@Column(columnName="role")
 	private Role role; // this will correlate to the ENUM type in our DB

@@ -8,6 +8,9 @@ import com.revature.annotations.Column;
 import com.revature.annotations.Entity;
 import com.revature.annotations.Id;
 import com.revature.annotations.JoinColumn;
+import com.revature.fields.ColumnField;
+import com.revature.fields.ForeignKeyField;
+import com.revature.fields.PrimaryKeyField;
 
 /**
  * This class' job is to gather as much information as possible about the class we want 

@@ -1,4 +1,4 @@
-package com.revature.util;
+package com.revature.fields;
 
 import java.lang.reflect.Field;
 
