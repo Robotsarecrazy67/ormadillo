@@ -57,7 +57,7 @@ public class ConnectionPool {
 		// this class is instantiated to read from a properties file 
 		Properties prop = new Properties(); // imported from java.util					
 		try {
-			prop.load(new FileReader("../orm-users/src/main/resources/application.properties"));
+			prop.load(new FileReader("src\\main\\resources\\application.properties"));
 			this.JDBC_DB_URL = prop.getProperty("url"); // this is retrieving the value of the "url" key in application.properties file
 			this.JDBC_USER =  prop.getProperty("username");
 			this.JDBC_PASS = prop.getProperty("password");

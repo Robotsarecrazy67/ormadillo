@@ -56,26 +56,6 @@ public class App {
 //			cfg.addAnnotatedClass(User.class);
 			
 			// this class is instantiated to read from a properties file 
-			Properties prop = new Properties(); // imported from java.util
-			
-			String url = "";
-			String username = "";
-			String password = "";
-			
-			try {
-				prop.load(new FileReader("../orm-users/src/main/resources/application.properties"));
-				url = prop.getProperty("url"); // this is retrieving the value of the "url" key in application.properties file
-				username =  prop.getProperty("username");
-				password = prop.getProperty("password");
-			}
-			catch (FileNotFoundException e) {
-				logger.error("Cannot locate application.properties file");
-				e.printStackTrace();
-			}
-			 catch (IOException e) {
-				logger.error("Something wrong with application.properties file");
-				e.printStackTrace();
-			}
 			
 			// Step 2 of operations with the Configuration Object is adding the DB creds and connecting
 			cfg.getConnection();
