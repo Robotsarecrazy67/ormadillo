@@ -1,10 +1,9 @@
-package com.revature.util;
+package com.ormadillo.util;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
-
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
@@ -12,8 +11,6 @@ import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.log4j.Logger;
-
-import com.revature.App;
 
 /**
  * COnnection Pooling means that connections are REUSED rather than created
@@ -29,20 +26,21 @@ public class ConnectionPool {
 
 	// Initialize a logger
 	private static Logger logger = Logger.getLogger(ConnectionPool.class);
-	private String JDBC_DRIVER;
-	private String JDBC_DB_URL;
-	private String JDBC_USER;
-	private String JDBC_PASS;
+	private static Properties prop = new Properties(); 
+	private static String JDBC_DRIVER;
+	private static String JDBC_DB_URL;
+	private static String JDBC_USER;
+	private static String JDBC_PASS;
 	
-	public ConnectionPool() {
+	static {
 		// this class is instantiated to read from a properties file 
-		Properties prop = new Properties(); // imported from java.util					
+		// imported from java.util					
 		try {
 			prop.load(new FileReader("src\\main\\resources\\application.properties"));
-			this.JDBC_DB_URL = prop.getProperty("url"); // Retrieve the URL
-			this.JDBC_USER =  prop.getProperty("username"); // Retrieve the DB Username
-			this.JDBC_PASS = prop.getProperty("password"); // Retrieve the DB Password
-			this.JDBC_DRIVER = prop.getProperty("driver");
+			JDBC_DB_URL = prop.getProperty("url"); // Retrieve the URL
+			JDBC_USER =  prop.getProperty("username"); // Retrieve the DB Username
+			JDBC_PASS = prop.getProperty("password"); // Retrieve the DB Password
+			JDBC_DRIVER = prop.getProperty("driver");
 		}
 		catch (FileNotFoundException error) {
 			logger.error("Cannot locate application.properties file");

@@ -1,26 +1,27 @@
-package com.revature;
+package com.ormadillo.testDriver;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import javax.sql.DataSource;
-import org.apache.log4j.Logger;
 
-import com.revature.fields.ColumnField;
-import com.revature.fields.ForeignKeyField;
-import com.revature.fields.PrimaryKeyField;
-import com.revature.models.Account;
-import com.revature.models.User;
-import com.revature.util.Configuration;
-import com.revature.util.ConnectionPool;
-import com.revature.util.MetaModel;
+import com.ormadillo.fields.ColumnField;
+import com.ormadillo.fields.ForeignKeyField;
+import com.ormadillo.fields.PrimaryKeyField;
+import com.ormadillo.models.Account;
+import com.ormadillo.models.User;
+import com.ormadillo.util.Configuration;
+import com.ormadillo.util.ConnectionPool;
+import com.ormadillo.util.DefineTable;
+import com.ormadillo.util.MetaModel;
 
 public class App {
 	private static Configuration cfg = new Configuration();
 	static Scanner scan = new Scanner(System.in);
-	private static Logger logger = Logger.getLogger(App.class);
 	private static Connection conn = null;
 
 	public static void main(String[] args) {
@@ -95,11 +96,16 @@ public class App {
 				}
 			
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
 			
 			jdbcObj.printDbStatus();
+			
+		for(Map.Entry<String, String> key: DefineTable.getAllTypeMap().entrySet()) {
+			System.out.println(key.getKey() + " = " + key.getValue());
+		}
+			
+		
 	}
 }
 

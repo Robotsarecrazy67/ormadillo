@@ -1,9 +1,9 @@
-package com.revature.fields;
+package com.ormadillo.fields;
 
 import java.lang.reflect.Field;
 
-import com.revature.annotations.Column;
-import com.revature.annotations.Id;
+import com.ormadillo.annotations.Column;
+import com.ormadillo.annotations.Id;
 
 public class PrimaryKeyField {
 	

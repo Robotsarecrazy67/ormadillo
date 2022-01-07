@@ -1,8 +1,8 @@
-package com.revature.fields;
+package com.ormadillo.fields;
 
 import java.lang.reflect.Field;
 
-import com.revature.annotations.JoinColumn;
+import com.ormadillo.annotations.JoinColumn;
 
 public class ForeignKeyField {
 	

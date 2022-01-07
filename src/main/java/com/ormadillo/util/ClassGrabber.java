@@ -1,4 +1,4 @@
-package com.revature.util;
+package com.ormadillo.util;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

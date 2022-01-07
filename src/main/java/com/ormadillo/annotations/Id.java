@@ -1,4 +1,4 @@
-package com.revature.annotations;
+package com.ormadillo.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

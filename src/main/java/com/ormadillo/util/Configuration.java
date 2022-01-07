@@ -1,4 +1,4 @@
-package com.revature.util;
+package com.ormadillo.util;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -9,13 +9,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-
 import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 
-import com.revature.App;
-import com.revature.annotations.Entity;
+import com.ormadillo.annotations.Entity;
 
 /**
  * The purpose of this class is to have the User only provide a few
@@ -26,14 +23,20 @@ import com.revature.annotations.Entity;
  */
 public class Configuration {
 	private static Logger logger = Logger.getLogger(Configuration.class);
-	private String packageName;
+	private static String packageName;
+	private static ConnectionPool conPool = new ConnectionPool(); 
+	
 	public Configuration() {
+		addAllClassesToORM();
+	}
+	
+	static {
 		
 		// this class is instantiated to read from a properties file 
 		Properties prop = new Properties();				
 		try {
 				prop.load(new FileReader("src\\main\\resources\\application.properties"));
-				this.packageName = prop.getProperty("packageName"); // Retrieve the model package name
+				packageName = prop.getProperty("packageName"); // Retrieve the model package name
 			}
 		catch (FileNotFoundException error) {
 			logger.error("Cannot locate application.properties file");
@@ -43,12 +46,10 @@ public class Configuration {
 			logger.error("Something wrong with application.properties file");
 			error.printStackTrace();
 		}
-		
-		addAllClassesToORM();
 	}
 	
 	
-	private static ConnectionPool conPool = new ConnectionPool(); 
+	
 
 	// this is the list of classes that the user wants our ORM to "scan" aka introspect and build 
 	// as DB objects

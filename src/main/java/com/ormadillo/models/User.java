@@ -1,12 +1,12 @@
-package com.revature.models;
+package com.ormadillo.models;
 
 import java.io.Serializable;
 import java.util.List;
 
-import com.revature.annotations.Column;
-import com.revature.annotations.Entity;
-import com.revature.annotations.Id;
-import com.revature.annotations.JoinColumn;
+import com.ormadillo.annotations.Column;
+import com.ormadillo.annotations.Entity;
+import com.ormadillo.annotations.Id;
+import com.ormadillo.annotations.JoinColumn;
 
 // Java Bean
 @Entity(tableName="users")

@@ -1,8 +1,8 @@
-package com.revature.fields;
+package com.ormadillo.fields;
 
 import java.lang.reflect.Field;
 
-import com.revature.annotations.Column;
+import com.ormadillo.annotations.Column;
 
 /**
  * The purpose of this class is to extract

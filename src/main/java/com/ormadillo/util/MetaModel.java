@@ -1,16 +1,16 @@
-package com.revature.util;
+package com.ormadillo.util;
 
 import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.revature.annotations.Column;
-import com.revature.annotations.Entity;
-import com.revature.annotations.Id;
-import com.revature.annotations.JoinColumn;
-import com.revature.fields.ColumnField;
-import com.revature.fields.ForeignKeyField;
-import com.revature.fields.PrimaryKeyField;
+import com.ormadillo.annotations.Column;
+import com.ormadillo.annotations.Entity;
+import com.ormadillo.annotations.Id;
+import com.ormadillo.annotations.JoinColumn;
+import com.ormadillo.fields.ColumnField;
+import com.ormadillo.fields.ForeignKeyField;
+import com.ormadillo.fields.PrimaryKeyField;
 
 /**
  * This class' job is to gather as much information as possible about the class we want 
@@ -35,7 +35,7 @@ public class MetaModel<T> { // we're inferring that the MetaModel class can only
 					+ clazz.getName() + " is not annotated with @Entity");
 			
 		}
-		// if so....reutrn a new MetaModel object of the class passed through 
+		// if so....return a new MetaModel object of the class passed through 
 		return new MetaModel<>(clazz);
 	}
 
