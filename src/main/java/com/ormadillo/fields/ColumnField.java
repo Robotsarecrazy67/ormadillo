@@ -1,6 +1,7 @@
 package com.ormadillo.fields;
 
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 import com.ormadillo.annotations.Column;
 
@@ -23,8 +24,7 @@ public class ColumnField {
 	public ColumnField(Field field) {
 		
 		if(field.getAnnotation(Column.class) == null) {
-			throw new IllegalStateException("Cannot create ColumnField object! Provided field, "
-					+ getName() + "is not annotated with @Column");
+
 		}
 		this.field = field;
 	}
@@ -37,9 +37,37 @@ public class ColumnField {
 	public Class<?> getType() {
 		return field.getType();
 	}
+
 	
 	// get columnName() -=- extract the column name attribute from the column annotation
 	public String getColumnName() {
 		return field.getAnnotation(Column.class).columnName();
 	}
+	
+	public boolean isNotNull() {
+		return field.getAnnotation(Column.class).notNull();
+	}
+	
+	public boolean isUnique() {
+		return field.getAnnotation(Column.class).unique();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(field);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ColumnField other = (ColumnField) obj;
+		return Objects.equals(field, other.field);
+	}
+	
+	
 }

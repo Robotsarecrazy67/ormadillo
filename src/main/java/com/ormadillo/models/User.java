@@ -17,17 +17,12 @@ public class User implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	// class variables
-	@Id(columnName="id")
+	@Id(columnName="user_id")
 	private int id; // represented in our DB as a SERIAL PRIMARY KEY
-	@Column(columnName="username")
+	@Column(columnName="username", notNull=true)
 	private String username;
 	@Column(columnName="pwd")
 	private String password;
-	@Column(columnName="role")
-	private Role role; // this will correlate to the ENUM type in our DB
-	
-	// data structure that represents all the accounts a User has
-	private List<Account> accounts;
 
 	// no-args constructor 
 	public User() {
@@ -35,24 +30,20 @@ public class User implements Serializable {
 	}
 	
 	// fully parameterized constructor
-	public User(int id, String username, String password, Role role, List<Account> accounts) {
+	public User(int id, String username, String password) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.password = password;
-		this.role = role;
-		this.accounts = accounts;
 	}
 
 	/*
 	 * Constructor
 	 */
-	public User(String username, String password, Role role, List<Account> accounts) {
+	public User(String username, String password) {
 		super();
 		this.username = username;
 		this.password = password;
-		this.role = role;
-		this.accounts = accounts;
 	}
 	
 	// Getters/Setters
@@ -80,22 +71,6 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
-	public Role getRole() {
-		return role;
-	}
-
-	public void setRole(Role role) {
-		this.role = role;
-	}
-
-	public List<Account> getAccounts() {
-		return accounts;
-	}
-
-	public void setAccounts(List<Account> accounts) {
-		this.accounts = accounts;
-	}
-
 	/*
 	 * Hash code function
 	 */
@@ -105,7 +80,6 @@ public class User implements Serializable {
 		int result = 1;
 		result = prime * result + id;
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		result = prime * result + ((role == null) ? 0 : role.hashCode());
 		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
@@ -129,8 +103,6 @@ public class User implements Serializable {
 				return false;
 		} else if (!password.equals(other.password))
 			return false;
-		if (role != other.role)
-			return false;
 		if (username == null) {
 			if (other.username != null)
 				return false;
@@ -141,8 +113,8 @@ public class User implements Serializable {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", username=" + username + ", password=" + password + ", role=" + role + ", accounts="
-				+ accounts + "]";
+		return "User [id=" + id + ", username=" + username + ", password=" + password + ", accounts="
+				+ "]";
 	}
 
 	

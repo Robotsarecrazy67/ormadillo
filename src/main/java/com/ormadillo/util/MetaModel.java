@@ -1,8 +1,12 @@
 package com.ormadillo.util;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.ormadillo.annotations.Column;
 import com.ormadillo.annotations.Entity;
@@ -22,8 +26,8 @@ public class MetaModel<T> { // we're inferring that the MetaModel class can only
 	
 	private Class<?> clazz;
 	private PrimaryKeyField primaryKeyField; // we created this "type" in our com.revature.util package
-	private List<ColumnField> columnFields;
-	private List<ForeignKeyField> foreignKeyFields;
+	private Set<ColumnField> columnFields;
+	private Set<ForeignKeyField> foreignKeyFields;
 	
 	// a method to check and then transpose a normal java class to a MetaModel class (we need 
 	// to check for the @Entity annotation
@@ -42,9 +46,9 @@ public class MetaModel<T> { // we're inferring that the MetaModel class can only
 	// we only call the constructor when we invoke the MetaModel.of(MyClass.class);
 	public MetaModel(Class<?> clazz) {
 		this.clazz = clazz;
-		this.columnFields = new LinkedList<>();
-		this.foreignKeyFields = new LinkedList<>();
-		
+		this.columnFields = new HashSet<ColumnField>();
+		this.foreignKeyFields = new HashSet<ForeignKeyField>();
+
 	}
 	
 	public String getTableName() {
@@ -52,7 +56,7 @@ public class MetaModel<T> { // we're inferring that the MetaModel class can only
 	}
 	
 	// this method will return all the column fields of a metamodel class
-	public List<ColumnField> getColumns() {
+	public Set<ColumnField> getColumns() {
 		// this method reutrns all the properties of the class that are marked with @Column annotation
 		
 		Field[] fields = clazz.getDeclaredFields();
@@ -60,13 +64,13 @@ public class MetaModel<T> { // we're inferring that the MetaModel class can only
 		// for each field within the above Field[], check if it has the Column annotation
 		// if it DOES have the @Column annotation add it to the metamodels's columnFields LinkedList
 		for (Field field : fields) {
-			
+
 			// The column reference variable will NOT be null, if the field is annotated with @Column
 			Column column = field.getAnnotation(Column.class);
-			
-			if (column != null) {
+			ColumnField cf = new ColumnField(field);
+			if (column != null && !this.columnFields.contains(cf)) {
 				// if it is indeed marked with @Column, instantiate a new ColumnField object with its data
-				columnFields.add(new ColumnField(field));
+				columnFields.add(cf);
 			}
 		}
 		
@@ -96,7 +100,7 @@ public class MetaModel<T> { // we're inferring that the MetaModel class can only
 	}
 	
 	// this is almost exactly like the getColumns() method, but we're checking for the @JoinColumn
-	public List<ForeignKeyField> getForeignKeys() {
+	public Set<ForeignKeyField> getForeignKeys() {
 		
 		Field[] fields = clazz.getDeclaredFields();
 
@@ -114,6 +118,7 @@ public class MetaModel<T> { // we're inferring that the MetaModel class can only
 	}
 	
 	
+	
 	public String getSimpleClassName() {
 		return clazz.getSimpleName();
 	}
@@ -122,4 +127,17 @@ public class MetaModel<T> { // we're inferring that the MetaModel class can only
 		return clazz.getName();
 	}
 
+	
+	public List<String> getColumnNameList(){
+		List<String> columnNames = getColumns().stream().map(column->column.getColumnName()).collect(Collectors.toList());
+		columnNames.addAll(getForeignKeys().stream().map(foreign->foreign.getColumnName()).collect(Collectors.toList()));
+		return columnNames;
+	} 
+	
+	public List<String> getColumnNameListWithId(){
+		ArrayList<String> columnNames = new ArrayList<String>();
+		columnNames.addAll(getColumns().stream().map(column->column.getColumnName()).collect(Collectors.toList()));
+		columnNames.addAll(getForeignKeys().stream().map(foreign->foreign.getColumnName()).collect(Collectors.toList()));
+		return columnNames;
+	} 
 }

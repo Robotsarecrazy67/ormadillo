@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
  */
 public class ConnectionPool {
 
+	private static int MAXCONNECTIONS;
 	// Initialize a logger
 	private static Logger logger = Logger.getLogger(ConnectionPool.class);
 	private static Properties prop = new Properties(); 
@@ -41,6 +42,7 @@ public class ConnectionPool {
 			JDBC_USER =  prop.getProperty("username"); // Retrieve the DB Username
 			JDBC_PASS = prop.getProperty("password"); // Retrieve the DB Password
 			JDBC_DRIVER = prop.getProperty("driver");
+			MAXCONNECTIONS = Integer.valueOf(prop.getProperty("maxConnections"));
 		}
 		catch (FileNotFoundException error) {
 			logger.error("Cannot locate application.properties file");
@@ -49,6 +51,10 @@ public class ConnectionPool {
 			logger.error("Something wrong with application.properties file");
 			error.printStackTrace();
 		}
+	}
+	
+	public ConnectionPool() {
+		logger.info("Adding Connection to pool.");
 	}
 	
 	// Generated Getters/Setters
@@ -100,7 +106,7 @@ public class ConnectionPool {
 		
 		// create an instnace of the GenericObjectPOol that holds our Pool of connection objects
 		gPool = new GenericObjectPool();
-		gPool.setMaxActive(5);
+		gPool.setMaxActive(MAXCONNECTIONS);
 		
 		// Create a connectionFacotry object which will be used by the pool object to creats the connections (which are all objects)
 		ConnectionFactory cf = new DriverManagerConnectionFactory(JDBC_DB_URL, JDBC_USER, JDBC_PASS);

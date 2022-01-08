@@ -8,8 +8,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JoinColumn {
-	
 	String columnName();
+	boolean notNull() default false;
+	Class<?> references();
 	
 	/**
 	 * The ForeignKeyField.java Class is used to introspect

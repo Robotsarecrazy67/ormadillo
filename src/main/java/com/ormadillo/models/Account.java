@@ -1,6 +1,7 @@
 package com.ormadillo.models;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import com.ormadillo.annotations.Column;
 import com.ormadillo.annotations.Entity;
@@ -20,10 +21,10 @@ public class Account implements Serializable{
 	private int id;
 	@Column(columnName="balance")
     private double balance;
-	@JoinColumn(columnName="acc_owner")
+	@JoinColumn(columnName="acc_owner", notNull=true, references=User.class)
 	private int accOwner;
-	@Column(columnName="status")
-	private Status status;
+	@Column(columnName="active", notNull=true, unique=false)
+	private boolean active;
 	
 	public Account() { // no args constructor
 		
@@ -32,32 +33,32 @@ public class Account implements Serializable{
 	/*
 	 * Fully Parameterized Constructor
 	 */
-	public Account(int id, double balance, int accOwner, Status pending) {
+	public Account(int id, double balance, int accOwner, boolean pending) {
 		super();
 		this.id = id;
 		this.balance = balance;
 		this.accOwner = accOwner;
-		this.status = pending;
+		this.active = pending;
 	}
 	
 	// DB will create ID for us!
-	public Account(double balance, int accOwner, Status active) {
+	public Account(double balance, int accOwner, boolean active) {
 		super();
 		this.balance = balance;
 		this.accOwner = accOwner;
-		this.status = active;
+		this.active = active;
 	}
 
 	// Getters/Setters
 	public int getId() {
 		return id;
 	}
-	public Status getStatus() {
-		return status;
+	public boolean getStatus() {
+		return active;
 	}
 	
-	public void setStatus(Status status) {
-		this.status = status;
+	public void setStatus(boolean status) {
+		this.active = status;
 	}
 	
 	public void setId(int id) {
@@ -81,32 +82,21 @@ public class Account implements Serializable{
 	}
 
 	public Boolean isActive() {
-		if(this.status == Status.Open) {
-			return true;
-		}
-		return false;
+		return this.active;
 	}
 
-	public void setActive(Status active) {
-		this.status = active;
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	@Override
 	public String toString() {
-		return "Account [id=" + id + ", balance=" + balance + ", accOwner=" + accOwner + ", status=" + status + "]";
+		return "Account [id=" + id + ", balance=" + balance + ", accOwner=" + accOwner + ", status=" + active + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + accOwner;
-		result = prime * result + (status != null ? 1231 : 1237);
-		long temp;
-		temp = Double.doubleToLongBits(balance);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + id;
-		return result;
+		return Objects.hash(accOwner, balance, id, active);
 	}
 
 	@Override
@@ -118,16 +108,10 @@ public class Account implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		Account other = (Account) obj;
-		if (accOwner != other.accOwner)
-			return false;
-		if (status != other.status)
-			return false;
-		if (Double.doubleToLongBits(balance) != Double.doubleToLongBits(other.balance))
-			return false;
-		if (id != other.id)
-			return false;
-		return true;
+		return accOwner == other.accOwner && Double.doubleToLongBits(balance) == Double.doubleToLongBits(other.balance)
+				&& id == other.id && active == other.active;
 	}
+
 	
 	
 	

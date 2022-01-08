@@ -1,6 +1,7 @@
 package com.ormadillo.fields;
 
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 import com.ormadillo.annotations.Column;
 import com.ormadillo.annotations.Id;
@@ -32,4 +33,22 @@ public class PrimaryKeyField {
 		return field.getAnnotation(Id.class).columnName();
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(field);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PrimaryKeyField other = (PrimaryKeyField) obj;
+		return Objects.equals(field, other.field);
+	}
+
+	
 }

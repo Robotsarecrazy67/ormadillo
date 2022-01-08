@@ -2,12 +2,12 @@ integer,INTEGER
 long,BIGINT
 short,SMALLINT
 float,FLOAT
-double,DOUBLE
+double,NUMERIC
 big_decimal,NUMERIC
 character,CHAR(1)
 string,VARCHAR
 byte,TINYINT
-boolean,BIT
+boolean,BOOLEAN
 date,DATE
 time,TIME
 timestamp,TIMESTAMP

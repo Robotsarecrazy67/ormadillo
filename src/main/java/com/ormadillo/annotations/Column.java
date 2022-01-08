@@ -10,7 +10,8 @@ import java.lang.annotation.Target;
 public @interface Column { // @interface == marker interface
 
 	String columnName();
-
+	boolean notNull() default false;
+	boolean unique() default false;
 }
 
 /**
