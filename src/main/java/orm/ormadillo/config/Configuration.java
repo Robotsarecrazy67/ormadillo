@@ -148,6 +148,9 @@ public class Configuration {
 		return crud.remove(obj);
 	}
 	
+	/*
+	 * Adds the given object to the database
+	 */
 	public boolean addObjectToDB(final Object obj){
 		return crud.save(obj);
 	}

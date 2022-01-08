@@ -32,6 +32,7 @@ public class App {
 		cfg.getConnection();
 		List<MetaModel<Class<?>>> set = cfg.getMetaModels();
 		User user = new User(3,  "berry", "crippled");
+		User user2 = new User("phill", "hello");
 		
 		// iterate over each class that has been added to the configuration object and print info about it
 			
@@ -115,7 +116,7 @@ public class App {
 		
 		cfg.updateObjectInDB(user, "username,password");
 		//cfg.removeObjectFromDB(user);
-		
+		cfg.addObjectToDB(user2);
 	}
 }
 

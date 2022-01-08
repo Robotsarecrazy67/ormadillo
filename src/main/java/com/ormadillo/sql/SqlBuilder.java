@@ -6,7 +6,11 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.log4j.Logger;
 import com.ormadillo.fields.ColumnField;
 import com.ormadillo.fields.ForeignKeyField;
@@ -29,7 +33,7 @@ public class SqlBuilder {
 	// maps java types to sql types
 	private static HashMap<String, String> allTypes = new HashMap<String, String>();
 	private static BufferedReader read;
-	// constants
+	// constants to improve readability
 	private static String LINE = "";
 	private static String SPACE = " ";
 	private static final String COMMA = ","; 
@@ -48,13 +52,18 @@ public class SqlBuilder {
 	private static final String UPDATE = "UPDATE";
 	private static final String DELETE = "DELETE";
 	private static final String ON = "ON";
-	
 	private static final String WHERE = "WHERE";
 	private static final String SET = "SET";
 	private static final String EQUALS = "=";
 	private static final String SINGLEQUOTE = "'";
 	private static final String CASCADE = "CASCADE";
 	private static final String FROM = "FROM";
+	private static final String INSERT = "INSERT";
+	private static final String INTO = "INTO";
+	private static final String VALUES = "VALUES";
+	private static final String CONFLICT = "CONFLICT";
+	private static final String DO = "DO";
+	private static final String NOTHING = "NOTHING";
 	
 	static { // load statically from csv file
 		try   
@@ -268,5 +277,75 @@ public class SqlBuilder {
 		removeStringSql += WHERE + SPACE + primaryKeyColumnName + SPACE + EQUALS + SPACE + id;
 		removeStringSql += SEMICOLON;
 		return removeStringSql;
+	}
+
+	protected static String save(Object obj) {
+		// initialize temporary variables
+		String saveStringSql = "";
+		String valStr = "";
+		Field field = null;
+		Object id = null;
+				Class<?> clazz = null;
+		boolean isString = false;
+		
+		MetaModel<Class<?>> model =  MetaModel.of(obj.getClass());
+		// save the table name to a variable
+		String tableName = model.getTableName();
+		PrimaryKeyField pk = model.getPrimaryKey();
+		String primaryKeyColumnName = pk.getColumnName();
+		List<String> columnNames = model.getColumnNameList();
+		// get the set of all the columns in the meta model
+		Set<ColumnField> columnSet = model.getColumns();
+		List<String> valueList = new LinkedList<String>();
+		String columns = columnNames.stream().collect(Collectors.joining(","));
+		
+		saveStringSql += INSERT + SPACE + INTO + SPACE + tableName + OP + columns + CP;
+		saveStringSql += NEWLINE + VALUES + SPACE + OP;
+		
+		for(ColumnField column: columnSet) {
+			isString = column.getType().equals(String.class);
+			try {
+				clazz = Class.forName(model.getClassName());
+			} 
+			catch (ClassNotFoundException error) {
+				logger.error("That class could not be found.");
+				error.printStackTrace();
+			}
+			try {
+					valStr = "";
+					field = clazz.getDeclaredField(column.getName()); // get the field from the columnfield
+					field.setAccessible(true); // set accessible to true
+					id = field.get(obj); // get the value of the object at the specified field
+					if(isString) { // Strings in SQL need single quotes
+						valStr += SINGLEQUOTE + id + SINGLEQUOTE;
+					}
+					else {
+						valStr += id;
+					}
+					valueList.add(valStr);
+			} 
+			catch (NoSuchFieldException error) {
+				logger.error("No such field with the given name.");
+					error.printStackTrace();
+			} 
+			catch (SecurityException error) {
+				logger.error("Not allowed to access that field.");
+				error.printStackTrace();
+			} 
+			catch (IllegalArgumentException error) {
+				logger.error("Invalid format for update string.");
+				error.printStackTrace();
+			} 
+			catch (IllegalAccessException error) {
+				logger.error("Invalid format for update string.");
+				error.printStackTrace();
+			}
+		}
+
+		String values = valueList.stream().collect(Collectors.joining(","));
+		saveStringSql += values;
+		saveStringSql += CP + SPACE + ON + SPACE + CONFLICT + SPACE + DO + SPACE;
+		saveStringSql += NOTHING + SEMICOLON;
+		return saveStringSql;
 	}
 }

@@ -85,6 +85,7 @@ public class CrudOps implements ICrudRepo<Class<?>> {
 				Statement statement = conn.createStatement();
 				statement.executeUpdate(query);
 				logger.info("Updated columns " + update_columns + SPACE + tableName);
+				return true;
 			}
 			catch (SQLException error) {
 				logger.error("Unable to update " + tableName);
@@ -100,23 +101,37 @@ public class CrudOps implements ICrudRepo<Class<?>> {
 		String tableName = metaModel.getTableName();
 		DataSource dataSource = cfg.getConnection();
 		try {
-				conn = dataSource.getConnection();
-				Statement statement = conn.createStatement();
-				String query = SqlBuilder.remove(obj);
-				statement.executeUpdate(query);
-				logger.info("Removed Object From " + tableName);
-				return true;
-			}
-			catch (SQLException error) {
-					logger.error("Unable to remove obj from DB " + tableName);
+			conn = dataSource.getConnection();
+			Statement statement = conn.createStatement();
+			String query = SqlBuilder.remove(obj);
+			statement.executeUpdate(query);
+			logger.info("Removed Object From " + tableName);
+			return true;
+		}
+		catch (SQLException error) {
+					logger.error("Unable to remove obj from DB");
 					error.printStackTrace();
-			}
+		}
 		return false;
 	}
 
 	@Override
 	public boolean save(final Object obj) {
-		// TODO Auto-generated method stub
+		MetaModel<Class<?>> metaModel = MetaModel.of(obj.getClass());
+		String tableName = metaModel.getTableName();
+		DataSource dataSource = cfg.getConnection();
+		try {
+			conn = dataSource.getConnection();
+			Statement statement = conn.createStatement();
+			String query = SqlBuilder.save(obj);
+			//statement.executeUpdate(query);
+			logger.info("Saved Object to " + tableName);
+			return true;
+		}
+		catch (SQLException error) {
+					logger.error("Unable to save obj to DB");
+					error.printStackTrace();
+		}
 		return false;
 	}
 
