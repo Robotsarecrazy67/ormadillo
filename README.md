@@ -70,13 +70,13 @@ You will also need to copy the allTypes.csv file to
   ### User API  
   
   - #### `public static DataSource getConnection()`  
-     - returns the singleton instance of the class. It is the starting point to calling any of the below methods.  
+     - returns a connection from the connection pool. It is the starting point to calling any of the below methods.  
   - #### `public HashMap<Class<?>, HashSet<Object>> getCache()`  
      - returns the cache as a HashMap.  
   - #### `public boolean addAnnotatedClass(final Class<?> clazz)`  
      - Adds a class to the ORM. This is the method to use to declare a Class is an object inside of the database.  
-  - #### `public boolean UpdateObjectInDB(final Object obj,final String update_columns)`  
-     - Updates the given object in the databse. Update columns is a comma seperated lsit fo all columns in the onject which need to be updated  
+  - #### `public boolean updateObjectInDB(final Object obj,final String update_columns)`  
+     - Updates the given object in the database. Update columns is a comma seperated list for all columns in the object which need to be updated  
   - #### `public boolean removeObjectFromDB(final Object obj)`  
      - Removes the given object from the database.  
   - #### `public boolean addObjectToDB(final Object obj)`  
@@ -86,7 +86,7 @@ You will also need to copy the allTypes.csv file to
   - #### `public Optional<List<Object>> getObjectFromDBById(final Class <?> clazz, int id)`
      - Finds an Object in the Database by the given id  
   - #### `public void commit()`  
-     - begin databse commit.  
+     - begin database commit.  
   - #### `public void rollback()`  
      - Rollback to previous commit.  
   - #### `public void rollback(final String name)`  
