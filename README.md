@@ -27,8 +27,8 @@ To-do list: [`for future iterations`]
 ## Getting Started  
 Currently project must be included as local dependency. to do so:
 ```shell
-  git clone https://github.com/210517-Enterprise/*your-repo*_p1.git
-  cd *your-repo*_p1
+  git clone https://github.com/Robotsarecrazy67/ormadillo.git
+  cd ormadillo
   mvn install
 ```
 Next, place the following inside your project pom.xml file:
@@ -47,10 +47,12 @@ Inside your project structure you need a application.proprties file.
  (typically located src/main/resources/)
  ``` 
   url=path/to/database
-  admin-usr=username/of/database
-  admin-pw=password/of/database 
+  username=username/of/database
+  password=password/of/database 
   driver=org.postgresql.Driver
-   
+  packageName=package containing annotated classes
+  autoBuildTables=true/false (builds the tables dynamically, set to false once tables are built)
+  maxConnections=number of maximum connections in pool
   ```
 You will also need to copy the allTypes.csv file to  
 ## Usage  
@@ -60,18 +62,14 @@ You will also need to copy the allTypes.csv file to
       - Indicates that this class is associated with table 'table_name'  
    - #### @Column(name = "column_name)  
       - Indicates that the Annotated field is a column in the table with the name 'column_name'  
-   - #### @Setter(name = "column_name")  
-      - Indicates that the anotated method is a setter for 'column_name'.  
-   - #### @Getter(name = "column_name")  
-      - Indicates that the anotated method is a getter for 'column_name'.  
-   - #### @PrimaryKey(name = "column_name") 
+   - #### @Id(name = "column_name") 
       - Indicates that the annotated field is the primary key for the table.
-   - #### @SerialKey(name = "column_name") 
+   - #### @JoinColumn(name = "column_name") 
       - Indicates that the annotated field is a serial key.
 
   ### User API  
   
-  - #### `public static Something getInstance()`  
+  - #### `public static DataSource getConnection()`  
      - returns the singleton instance of the class. It is the starting point to calling any of the below methods.  
   - #### `public HashMap<Class<?>, HashSet<Object>> getCache()`  
      - returns the cache as a HashMap.  
@@ -83,22 +81,19 @@ You will also need to copy the allTypes.csv file to
      - Removes the given object from the database.  
   - #### `public boolean addObjectToDB(final Object obj)`  
      - Adds the given object to the database.  
-  - #### `public Optional<List<Object>> getListObjectFromDB(final Class <?> clazz, final String columns, final String conditions)`  
-  - #### `public Optional<List<Object>> getListObjectFromDB(final Class <?> clazz, final String columns, final String conditions,final String operators)`  
-  - #### `public Optional<List<Object>> getListObjectFromDB(final Class<?> clazz)`  
-     - Gets a list of all objects in the database which match the included search criteria  
-        - columns - comma seperated list of columns to search by.  
-        - conditions - coma seperated list the values the columns should match to.  
-        - operators - comma seperated list of operators to apply to columns (AND/OR) in order that they should be applied.  
-  - #### `public void beginCommit()`  
+  - #### `public Optional<List<Object>> getListObjectFromDB(final Class <?> clazz, final String columns, final String conditions)`
+     - Finds all Objects in the Database by the given class
+  - #### `public Optional<List<Object>> getObjectFromDBById(final Class <?> clazz, int id)`
+     - Finds an Object in the Database by the given id  
+  - #### `public void commit()`  
      - begin databse commit.  
-  - #### `public void Rollback()`  
+  - #### `public void rollback()`  
      - Rollback to previous commit.  
-  - #### `public void Rollback(final String name)`  
+  - #### `public void rollback(final String name)`  
      - Rollback to previous commit with given name.  
   - #### `public void setSavepoint(final String name)`  
      - Set a savepoint with the given name.  
-  - #### `public void ReleaseSavepoint(final String name)`  
+  - #### `public void releaseSavepoint(final String name)`  
      - Release the savepoint with the given name.  
   - #### `public void enableAutoCommit()`  
      - Enable auto commits on the database.  
