@@ -184,7 +184,7 @@ public class Configuration {
 		List<Object> list = getListObjectFromDB(clazz).isPresent() ? getListObjectFromDB(clazz).get() : null;
 		cache.put(clazz, (HashSet<Object>) list.stream().collect(Collectors.toSet()));
 		if(list!=null){
-			logger.info("Retrieved all objects of the class " + clazz.getSimpleName());
+			logger.info("Added all objects of the class " + clazz.getSimpleName() + " from the database to the cache");
 		}
 	}
 	

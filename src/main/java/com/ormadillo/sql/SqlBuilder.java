@@ -128,7 +128,7 @@ public class SqlBuilder {
 		// save the primary key column name
 		String primaryKeyColumnName = pk.getColumnName();
 		// get the set of all the columns in the meta model
-		Set<ColumnField> columns = metaModel.getColumns();
+		List<ColumnField> columns = metaModel.getColumns();
 		// get the set of all the foreign keys in the meta model
 		Set<ForeignKeyField> foreignKeyFields = metaModel.getForeignKeys();
 		// if there is at least one foreign key
@@ -297,10 +297,10 @@ public class SqlBuilder {
 		String tableName = model.getTableName();
 		List<String> columnNames = model.getColumnNameList();
 		// get the set of all the columns in the meta model
-		Set<ColumnField> columnSet = model.getColumns();
+		List<ColumnField> columnSet = model.getColumns();
 		List<String> valueList = new LinkedList<String>();
 		String columns = columnNames.stream().collect(Collectors.joining(","));
-		
+
 		/*
 		 * Build the SQL String
 		 */
