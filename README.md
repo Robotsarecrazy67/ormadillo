@@ -81,7 +81,7 @@ You will also need to copy the allTypes.csv file to
      - Removes the given object from the database.  
   - #### `public boolean addObjectToDB(final Object obj)`  
      - Adds the given object to the database.  
-  - #### `public Optional<List<Object>> getListObjectFromDB(final Class <?> clazz, final String columns, final String conditions)`
+  - #### `public Optional<List<Object>> getListObjectFromDB(final Class <?> clazz)`
      - Finds all Objects in the Database by the given class
   - #### `public Optional<List<Object>> getObjectFromDBById(final Class <?> clazz, int id)`
      - Finds an Object in the Database by the given id  
