@@ -22,7 +22,7 @@ To-do list: [`for future iterations`]
 * Mapping of join columns inside of entities.    
 * Implement of aggregate functions.  
 * Add Custom Exceptions 
-* etc...
+* Add Additional Read Methods
 
 ## Getting Started  
 Currently project must be included as local dependency. to do so:
@@ -73,7 +73,7 @@ You will also need to copy the allTypes.csv file to
      - returns the singleton instance of the class. It is the starting point to calling any of the below methods.  
   - #### `public HashMap<Class<?>, HashSet<Object>> getCache()`  
      - returns the cache as a HashMap.  
-  - #### `public boolean addClass(final Class<?> clazz)`  
+  - #### `public boolean addAnnotatedClass(final Class<?> clazz)`  
      - Adds a class to the ORM. This is the method to use to declare a Class is an object inside of the database.  
   - #### `public boolean UpdateObjectInDB(final Object obj,final String update_columns)`  
      - Updates the given object in the databse. Update columns is a comma seperated lsit fo all columns in the onject which need to be updated  
