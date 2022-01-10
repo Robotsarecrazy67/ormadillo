@@ -67,7 +67,9 @@ public class CrudOps implements ICrudRepo<Class<?>> {
 			try {
 					conn = dataSource.getConnection();
 					Statement statement = conn.createStatement();
-					String query = SqlBuilder.createTableIfDoesNotExist(metaModel);	
+					String query = SqlBuilder.createTableIfDoesNotExist(metaModel);
+					statement.executeUpdate(query);
+					logger.info("Created Table " + tableName + " from the annotated class " + metaModel.getSimpleClassName());
 					return true;
 				}
 				catch (SQLException error) {
@@ -176,8 +178,8 @@ public class CrudOps implements ICrudRepo<Class<?>> {
 		catch (SQLException error) {
 					logger.error("Unable to save obj to DB");
 					error.printStackTrace();
+					return false;
 		}
-		return false;
 	}
 
 	/*
@@ -319,19 +321,47 @@ public class CrudOps implements ICrudRepo<Class<?>> {
 		return false;
 	}
 
-	
+	/*
+	 * Commit the current transaction to the database
+	 */
 	public void commit() {
-		transactions.add(COMMIT);
-		// iterate through transactions and build a commit string
-		transactions.stream().forEach(e->System.out.println(e));
+		if(transactions == null) {
+			logger.info("Not in a transaction block");
+		}
+		else {
+			DataSource dataSource = cfg.getConnection();
+			// add final commit message
+			transactions.add(COMMIT);
+			// iterate through transactions and build a commit string
+			String commit = transactions.stream().collect(Collectors.joining("\n"));
+			try {
+				conn = dataSource.getConnection();
+				Statement statement = conn.createStatement();
+				//System.out.println(commit);
+				statement.executeUpdate(commit);
+				logger.info("Transaction block has been persisted to the datebase.");
+			} catch (SQLException e) {
+				logger.error("Unable to persist Transaction block to the database");
+				e.printStackTrace();
+			}
+			logger.info("==============Exiting transaction block==============");
+		}
 	}
 	
+	/*
+	 * Rollback to the beginning of the transaction block
+	 */
 	public void rollback() {
+		logger.info("==============Exiting transaction block==============");
 		transactions = null;
 	}
 	
+	/*
+	 * Roll back to a given save point
+	 */
 	public void rollback(String savePoint) {
 		if(transactions != null && !transactions.isEmpty() && transactions.contains(savePoint)) {
+			logger.info("Rolling back to the savepoint " + savePoint);
 			Iterator<String> iter = transactions.descendingIterator();
 			while(iter.hasNext() && !iter.next().equals(savePoint)) {
 				iter.remove();
@@ -340,19 +370,38 @@ public class CrudOps implements ICrudRepo<Class<?>> {
 		}
 	}
 	
+	/*
+	 * Set a save point in the current transaction block
+	 */
 	public void setSavepoint(String savePoint) {
-		transactions.add(savePoint);
+		if(transactions != null) {
+			logger.info("Save state with the name " + savePoint + " has been set.");
+			transactions.add(savePoint);
+		}
+		else {
+			logger.error("Not in a transaction block");
+		}
 	}
 	
+	/*
+	 * Releases a save point in the current transaction block
+	 */
 	public void releaseSavepoint(String savePoint) {
-		transactions.remove(savePoint);
-	}
+		if(transactions != null) {
+			logger.info("Save state with the name " + savePoint + " has been released.");
+			transactions.remove(savePoint);
+		}
+		else {
+			logger.error("Not in a transaction block");
+		}
 
-	public LinkedList<String> getTransactions(){
-		return transactions;
 	}
 	
+	/*
+	 * Begin a transaction block
+	 */
 	public void setTransaction(){
+		logger.info("==============Entering transaction block==============");
 		transactions = new LinkedList<String>();
 		transactions.add(BEGIN);
 	}

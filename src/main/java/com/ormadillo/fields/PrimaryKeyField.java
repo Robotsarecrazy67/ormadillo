@@ -23,10 +23,6 @@ public class PrimaryKeyField {
 		return field.getName();
 	}
 	
-	public void setAccessible() {
-		field.setAccessible(true);
-	}
-	
 	// return the TYPE of the field that's annotated
 	public Class<?> getType() {
 		return field.getType();
@@ -38,6 +34,7 @@ public class PrimaryKeyField {
 	}
 	
 	public Object getValue(Object obj){
+		field.setAccessible(true);
 		try {
 			return field.get(obj);
 		} catch (IllegalArgumentException e) {

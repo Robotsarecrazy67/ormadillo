@@ -290,6 +290,7 @@ public class SqlBuilder {
 		Object id = null;
 		Class<?> clazz = null;
 		boolean isString = false;
+		
 		// initialize variables to hold pertinent information
 		MetaModel<Class<?>> model =  MetaModel.of(obj.getClass());
 		// save the table name to a variable
@@ -299,6 +300,7 @@ public class SqlBuilder {
 		Set<ColumnField> columnSet = model.getColumns();
 		List<String> valueList = new LinkedList<String>();
 		String columns = columnNames.stream().collect(Collectors.joining(","));
+		
 		/*
 		 * Build the SQL String
 		 */
@@ -344,6 +346,45 @@ public class SqlBuilder {
 				error.printStackTrace();
 			}
 		}
+		for(ForeignKeyField key: model.getForeignKeys()) {
+			try {
+				clazz = Class.forName(model.getClassName());
+			} 
+			catch (ClassNotFoundException error) {
+				logger.error("That class could not be found.");
+				error.printStackTrace();
+			}
+			try {
+				valStr = "";
+				field = clazz.getDeclaredField(key.getName()); // get the field from the columnfield
+				field.setAccessible(true); // set accessible to true
+				id = field.get(obj); // get the value of the object at the specified field
+				if(isString) { // Strings in SQL need single quotes
+					valStr += SINGLEQUOTE + id + SINGLEQUOTE;
+				}
+				else {
+					valStr += id;
+				}
+				valueList.add(valStr);
+			} 
+			catch (NoSuchFieldException error) {
+				logger.error("No such field with the given name.");
+					error.printStackTrace();
+			} 
+			catch (SecurityException error) {
+				logger.error("Not allowed to access that field.");
+				error.printStackTrace();
+			} 
+			catch (IllegalArgumentException error) {
+				logger.error("Invalid format.");
+				error.printStackTrace();
+			} 
+			catch (IllegalAccessException error) {
+				logger.error("Invalid format.");
+				error.printStackTrace();
+			}
+		}
+		
 
 		String values = valueList.stream().collect(Collectors.joining(","));
 		saveStringSql += values;

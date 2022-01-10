@@ -34,7 +34,7 @@ public class Configuration {
 	private static String packageName;
 	private static ConnectionPool conPool = new ConnectionPool(); 
 	private static List<MetaModel<Class<?>>> metaModelList;
-	private static boolean AUTOCOMMIT = false;
+	private boolean AUTOCOMMIT = false;
 	private HashMap<Class<?>, HashSet<Object>> cache;
 	CrudOps crud = new CrudOps(this);
 	
@@ -160,9 +160,6 @@ public class Configuration {
 	
 	public Optional<List<Object>> getListObjectFromDB(Class<?> clazz){
 		Optional<List<Object>> result = crud.findAll(clazz);
-		if(result!=null){
-			logger.info("Retrieved all objects of the class " + clazz.getSimpleName());
-		}
 		return result;
 	}
 	
@@ -186,6 +183,9 @@ public class Configuration {
 	public void addAllFromDBToCache(Class<?> clazz) {
 		List<Object> list = getListObjectFromDB(clazz).isPresent() ? getListObjectFromDB(clazz).get() : null;
 		cache.put(clazz, (HashSet<Object>) list.stream().collect(Collectors.toSet()));
+		if(list!=null){
+			logger.info("Retrieved all objects of the class " + clazz.getSimpleName());
+		}
 	}
 	
 	public void enableAutoCommit() {

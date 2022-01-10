@@ -1,5 +1,6 @@
 package com.ormadillo.testDriver;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,13 +34,15 @@ public class App {
 		// Create a connection
 		cfg.getConnection();
 		List<MetaModel<Class<?>>> set = cfg.getMetaModels();
-		User user = new User("terry", "pass");
+		User user = new User("Larry", "thelobster");
 		User user2 = new User(4, "notphill", "goodbye");
 		User user3 = new User("carlos", "there");
 		User user4 = new User("ron", "general");
 		User user5 = new User(1, "Larry", "thelobster");
 		User user6 = new User("steven", "universe");
-		
+		Account acc1 = new Account(new  BigDecimal(100), 1, true);
+		Account acc2 = new Account(new  BigDecimal(2000), 2, true);
+		Account acc3 = new Account(new  BigDecimal(300), 3, true);
 		// iterate over each class that has been added to the configuration object and print info about it
 			
 //		for (MetaModel<?> metamodel : set) {
@@ -123,16 +126,11 @@ public class App {
 		//cfg.updateObjectInDB(user, "username,pwd");
 		//cfg.removeObjectFromDB(user);
 		//cfg.addObjectToDB(user2);
-		cfg.addAllFromDBToCache(User.class);
-		cfg.getListObjectFromDB(User.class);
-		cfg.getListObjectFromDB(Account.class);
-		Map<Class<?>, HashSet<Object>> hash = cfg.getCache();
+		
 //		for(Map.Entry<Class<?>, HashSet<Object>> entry: hash.entrySet()) {
 //			System.out.println(entry);
 //		}
 		//System.out.println(cfg.getListObjectFromDB(User.class, "pwd='1234'"));
-		System.out.println(cfg.getObjectFromDBById(User.class, 7));
-		System.out.println(cfg.getObjectFromDBById(User.class, 1));
 		//System.out.println(cfg.getListObjectFromDB(User.class));
 		
 		
@@ -142,15 +140,26 @@ public class App {
 			//do stuff
 			 // update item in db with new values(Needs the id to know which obj to update)
 			cfg.addObjectToDB(user);
-			cfg.addObjectToDB(user); // duplicates shouldnt matter
 			cfg.updateObjectInDB(user2, "username,pwd");
 			cfg.addObjectToDB(user3);
 			cfg.addObjectToDB(user4);
+			cfg.addObjectToDB(user6);
+			cfg.addObjectToDB(acc1);
+			cfg.addObjectToDB(acc2);
+			cfg.addObjectToDB(acc3);
 			cfg.setSavePoint("state");
 			cfg.removeObjectFromDB(user5);
 			cfg.rollback("state");
 			// commit
 			cfg.commit();
+			
+			cfg.addAllFromDBToCache(User.class);
+			cfg.getListObjectFromDB(User.class);
+			cfg.getListObjectFromDB(Account.class);
+			Map<Class<?>, HashSet<Object>> hash = cfg.getCache();
+			
+			System.out.println(cfg.getObjectFromDBById(User.class, 7));
+			System.out.println(cfg.getObjectFromDBById(User.class, 1));
 	}
 }
 

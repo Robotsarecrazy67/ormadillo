@@ -39,6 +39,7 @@ public class ColumnField {
 	}
 	
 	public Object getValue(Object obj){
+		field.setAccessible(true);
 		try {
 			return field.get(obj);
 		} catch (IllegalArgumentException e) {
