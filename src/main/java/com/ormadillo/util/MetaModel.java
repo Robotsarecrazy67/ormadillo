@@ -26,7 +26,7 @@ public class MetaModel<T> { // we're inferring that the MetaModel class can only
 	
 	private Class<?> clazz;
 	private PrimaryKeyField primaryKeyField; // we created this "type" in our com.revature.util package
-	private Set<ColumnField> columnFields;
+	private List<ColumnField> columnFields;
 	private Set<ForeignKeyField> foreignKeyFields;
 	
 	// a method to check and then transpose a normal java class to a MetaModel class (we need 
@@ -46,7 +46,7 @@ public class MetaModel<T> { // we're inferring that the MetaModel class can only
 	// we only call the constructor when we invoke the MetaModel.of(MyClass.class);
 	public MetaModel(Class<?> clazz) {
 		this.clazz = clazz;
-		this.columnFields = new HashSet<ColumnField>();
+		this.columnFields = new LinkedList<ColumnField>();
 		this.foreignKeyFields = new HashSet<ForeignKeyField>();
 
 	}
@@ -56,7 +56,7 @@ public class MetaModel<T> { // we're inferring that the MetaModel class can only
 	}
 	
 	// this method will return all the column fields of a metamodel class
-	public Set<ColumnField> getColumns() {
+	public List<ColumnField> getColumns() {
 		// this method reutrns all the properties of the class that are marked with @Column annotation
 		
 		Field[] fields = clazz.getDeclaredFields();

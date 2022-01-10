@@ -43,7 +43,7 @@ Next, place the following inside your project pom.xml file:
 
 ```
 
-Inside your project structure you need a application.proprties file. 
+Inside your project structure you need a application.properties file. 
  (typically located src/main/resources/)
  ``` 
   url=path/to/database

@@ -191,6 +191,7 @@ public class CrudOps implements ICrudRepo<Class<?>> {
 			logger.info("Retrieved a  List of " + clazz.getSimpleName() + "s from the local cache");
 			return Optional.of(cfg.getCache().get(clazz).stream().collect(Collectors.toList()));
 		}
+		logger.info("Retrieved a  List of " + clazz.getSimpleName() + "s from the database");
 		String sql = SqlBuilder.findAllObjectsInClass(clazz);
 		return Optional.of(getObjects(clazz, sql));
 	}
@@ -337,7 +338,6 @@ public class CrudOps implements ICrudRepo<Class<?>> {
 			try {
 				conn = dataSource.getConnection();
 				Statement statement = conn.createStatement();
-				//System.out.println(commit);
 				statement.executeUpdate(commit);
 				logger.info("Transaction block has been persisted to the datebase.");
 			} catch (SQLException e) {
