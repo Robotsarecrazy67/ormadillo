@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,7 +19,7 @@ import com.ormadillo.fields.PrimaryKeyField;
 import com.ormadillo.util.MetaModel;
 
 /*
- * Class is responsible for defining tables within the Database
+ * Class is responsible for defining SQL Queries that can be executed to the Database
  */
 public class SqlBuilder {
 	/*
@@ -64,6 +65,9 @@ public class SqlBuilder {
 	private static final String CONFLICT = "CONFLICT";
 	private static final String DO = "DO";
 	private static final String NOTHING = "NOTHING";
+	private static final String ASTERISK = "*";
+	private static final String ALL = "ALL";
+	private static final String SELECT = "SELECT";
 	
 	static { // load statically from csv file
 		try   
@@ -202,7 +206,7 @@ public class SqlBuilder {
 				name = column.getColumnName();
 			}
 				try {
-					field = clazz.getDeclaredField(str);
+					field = clazz.getDeclaredField(column.getName());
 					field.setAccessible(true);
 					value = field.get(obj);
 					pk = model.getPrimaryKey().getName();
@@ -226,11 +230,10 @@ public class SqlBuilder {
 		updateTableSQL += UPDATE + SPACE + tableName + NEWLINE;
 		updateTableSQL += SPACE + SET + SPACE + name + SPACE + EQUALS + SPACE;
 		if(isString) {
-			updateTableSQL += SINGLEQUOTE;
+			updateTableSQL += SINGLEQUOTE + value + SINGLEQUOTE;
 		}
-		updateTableSQL += value;
-		if(isString) {
-			updateTableSQL += SINGLEQUOTE;
+		else {
+			updateTableSQL += value;
 		}
 		updateTableSQL += SPACE + WHERE + SPACE + pkColumnName;
 		updateTableSQL += SPACE + EQUALS + SPACE + id + SEMICOLON;
@@ -285,20 +288,20 @@ public class SqlBuilder {
 		String valStr = "";
 		Field field = null;
 		Object id = null;
-				Class<?> clazz = null;
+		Class<?> clazz = null;
 		boolean isString = false;
-		
+		// initialize variables to hold pertinent information
 		MetaModel<Class<?>> model =  MetaModel.of(obj.getClass());
 		// save the table name to a variable
 		String tableName = model.getTableName();
-		PrimaryKeyField pk = model.getPrimaryKey();
-		String primaryKeyColumnName = pk.getColumnName();
 		List<String> columnNames = model.getColumnNameList();
 		// get the set of all the columns in the meta model
 		Set<ColumnField> columnSet = model.getColumns();
 		List<String> valueList = new LinkedList<String>();
 		String columns = columnNames.stream().collect(Collectors.joining(","));
-		
+		/*
+		 * Build the SQL String
+		 */
 		saveStringSql += INSERT + SPACE + INTO + SPACE + tableName + OP + columns + CP;
 		saveStringSql += NEWLINE + VALUES + SPACE + OP;
 		
@@ -333,11 +336,11 @@ public class SqlBuilder {
 				error.printStackTrace();
 			} 
 			catch (IllegalArgumentException error) {
-				logger.error("Invalid format for update string.");
+				logger.error("Invalid format.");
 				error.printStackTrace();
 			} 
 			catch (IllegalAccessException error) {
-				logger.error("Invalid format for update string.");
+				logger.error("Invalid format.");
 				error.printStackTrace();
 			}
 		}
@@ -348,4 +351,27 @@ public class SqlBuilder {
 		saveStringSql += NOTHING + SEMICOLON;
 		return saveStringSql;
 	}
+
+	public static String findAllObjectsInClass(Class<?> clazz) {
+		String findAllClassSql = "";
+		MetaModel<Class<?>> model =  MetaModel.of(clazz);
+		// save the table name to a variable
+		String tableName = model.getTableName();
+		findAllClassSql += SELECT + SPACE + ALL + SPACE + ASTERISK + SPACE + FROM + SPACE + tableName;
+		findAllClassSql += SEMICOLON;
+		return findAllClassSql;
+	}
+
+	public static String findBy(Class<?> clazz, int id) {
+		String findBySql = "";
+		MetaModel<Class<?>> model =  MetaModel.of(clazz);
+		// save the table name to a variable
+		String tableName = model.getTableName();
+		String pkName = model.getPrimaryKey().getColumnName();
+		findBySql += SELECT + SPACE + ASTERISK + SPACE + FROM + SPACE + tableName + SPACE;
+		findBySql += WHERE + SPACE + pkName + EQUALS  + id+ SEMICOLON;
+		return findBySql;
+	}
+	
+	
 }

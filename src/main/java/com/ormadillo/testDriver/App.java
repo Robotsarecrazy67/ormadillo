@@ -4,8 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -31,8 +33,12 @@ public class App {
 		// Create a connection
 		cfg.getConnection();
 		List<MetaModel<Class<?>>> set = cfg.getMetaModels();
-		User user = new User(3,  "berry", "crippled");
-		User user2 = new User("phill", "hello");
+		User user = new User("terry", "pass");
+		User user2 = new User(4, "notphill", "goodbye");
+		User user3 = new User("carlos", "there");
+		User user4 = new User("ron", "general");
+		User user5 = new User(1, "Larry", "thelobster");
+		User user6 = new User("steven", "universe");
 		
 		// iterate over each class that has been added to the configuration object and print info about it
 			
@@ -114,9 +120,37 @@ public class App {
 //		
 //		
 		
-		cfg.updateObjectInDB(user, "username,password");
+		//cfg.updateObjectInDB(user, "username,pwd");
 		//cfg.removeObjectFromDB(user);
-		cfg.addObjectToDB(user2);
+		//cfg.addObjectToDB(user2);
+		cfg.addAllFromDBToCache(User.class);
+		cfg.getListObjectFromDB(User.class);
+		cfg.getListObjectFromDB(Account.class);
+		Map<Class<?>, HashSet<Object>> hash = cfg.getCache();
+//		for(Map.Entry<Class<?>, HashSet<Object>> entry: hash.entrySet()) {
+//			System.out.println(entry);
+//		}
+		//System.out.println(cfg.getListObjectFromDB(User.class, "pwd='1234'"));
+		System.out.println(cfg.getObjectFromDBById(User.class, 7));
+		System.out.println(cfg.getObjectFromDBById(User.class, 1));
+		//System.out.println(cfg.getListObjectFromDB(User.class));
+		
+		
+		// Example Transaction Block
+		// start the transaction block
+			cfg.setTransaction();
+			//do stuff
+			 // update item in db with new values(Needs the id to know which obj to update)
+			cfg.addObjectToDB(user);
+			cfg.addObjectToDB(user); // duplicates shouldnt matter
+			cfg.updateObjectInDB(user2, "username,pwd");
+			cfg.addObjectToDB(user3);
+			cfg.addObjectToDB(user4);
+			cfg.setSavePoint("state");
+			cfg.removeObjectFromDB(user5);
+			cfg.rollback("state");
+			// commit
+			cfg.commit();
 	}
 }
 

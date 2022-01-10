@@ -3,7 +3,7 @@ long,BIGINT
 short,SMALLINT
 float,FLOAT
 double,NUMERIC
-big_decimal,NUMERIC
+bigdecimal,NUMERIC
 character,CHAR(1)
 string,VARCHAR
 byte,TINYINT

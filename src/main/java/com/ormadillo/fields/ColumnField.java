@@ -37,6 +37,19 @@ public class ColumnField {
 	public Class<?> getType() {
 		return field.getType();
 	}
+	
+	public Object getValue(Object obj){
+		try {
+			return field.get(obj);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	
 	// get columnName() -=- extract the column name attribute from the column annotation

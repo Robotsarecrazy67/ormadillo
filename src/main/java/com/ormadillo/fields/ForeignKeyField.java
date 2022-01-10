@@ -39,6 +39,19 @@ public class ForeignKeyField {
 	public Class<?> getReference(){
 		return field.getAnnotation(JoinColumn.class).references();
 	}
+	
+	public Object getValue(Object obj){
+		try {
+			return field.get(obj);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	@Override
 	public int hashCode() {

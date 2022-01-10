@@ -3,7 +3,6 @@ package orm.ormadillo.config;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 
@@ -33,12 +34,14 @@ public class Configuration {
 	private static String packageName;
 	private static ConnectionPool conPool = new ConnectionPool(); 
 	private static List<MetaModel<Class<?>>> metaModelList;
-	public HashMap<Class<?>, HashSet<Object>> cache;
+	private static boolean AUTOCOMMIT = false;
+	private HashMap<Class<?>, HashSet<Object>> cache;
 	CrudOps crud = new CrudOps(this);
 	
 	public Configuration() {
 		addAllClassesToORM();
 		createAllTables();
+		cache = new HashMap<Class<?>, HashSet<Object>>();
 	}
 	
 	static {
@@ -135,7 +138,7 @@ public class Configuration {
 	 * @ param update_columns comma separated list for all columns in the object that need to be updated
 	 * @ return boolean result of if we were successful or not
 	 */
-	public boolean updateObjectInDB(final Object obj, final String update_columns) {
+	public boolean updateObjectInDB(Object obj, String update_columns) {
 		return crud.update(obj, update_columns);
 	}
 	
@@ -144,20 +147,76 @@ public class Configuration {
 	 * @param obj given object to remove from db
 	 * @ return boolean result of if we were successful or not
 	 */
-	public boolean removeObjectFromDB(final Object obj) {
+	public boolean removeObjectFromDB(Object obj) {
 		return crud.remove(obj);
 	}
 	
 	/*
 	 * Adds the given object to the database
 	 */
-	public boolean addObjectToDB(final Object obj){
+	public boolean addObjectToDB(Object obj){
 		return crud.save(obj);
+	}
+	
+	public Optional<List<Object>> getListObjectFromDB(Class<?> clazz){
+		Optional<List<Object>> result = crud.findAll(clazz);
+		if(result!=null){
+			logger.info("Retrieved all objects of the class " + clazz.getSimpleName());
+		}
+		return result;
+	}
+	
+	public Object getObjectFromDBById(Class<?> clazz, int id){
+		Optional<List<Object>> result = crud.findById(clazz, id);
+
+		if(result.get().isEmpty()) {
+			logger.error(clazz.getSimpleName() + " with id " + id + " does not exist in the database");
+			return null;
+		}
+		if(result!=null){
+			logger.info("Retrieved " + clazz.getSimpleName() + " with id " + id );
+		}
+		return result.get().get(0);
 	}
 	
 	public HashMap<Class<?>, HashSet<Object>> getCache(){
 		return cache;
 	}
 	
-	//public 
+	public void addAllFromDBToCache(Class<?> clazz) {
+		List<Object> list = getListObjectFromDB(clazz).isPresent() ? getListObjectFromDB(clazz).get() : null;
+		cache.put(clazz, (HashSet<Object>) list.stream().collect(Collectors.toSet()));
+	}
+	
+	public void enableAutoCommit() {
+		this.AUTOCOMMIT = true;
+	}
+	
+	public boolean getAutoCommit() {
+		return this.AUTOCOMMIT;
+	}
+	
+	public void setTransaction() {
+		crud.setTransaction();
+	}
+	
+	public void commit() {
+		crud.commit();
+	}
+	
+	public void rollback() {
+		crud.rollback();
+	}
+	
+	public void rollback(String string) {
+		crud.rollback(string);
+	}
+	
+	public void setSavePoint(String savePoint) {
+		crud.setSavepoint(savePoint);
+	}
+	
+	public void releaseSavepoint(String savePoint) {
+		crud.releaseSavepoint(savePoint);
+	}
 }

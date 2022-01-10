@@ -12,14 +12,10 @@ import com.ormadillo.annotations.JoinColumn;
 @Entity(tableName="users")
 public class User implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	// class variables
 	@Id(columnName="user_id")
 	private int id; // represented in our DB as a SERIAL PRIMARY KEY
-	@Column(columnName="username", notNull=true)
+	@Column(columnName="username", notNull=true, unique = true)
 	private String username;
 	@Column(columnName="pwd")
 	private String password;
@@ -113,7 +109,7 @@ public class User implements Serializable {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", username=" + username + ", password=" + password + ", accounts="
+		return "User [id=" + id + ", username=" + username + ", password=" + password
 				+ "]";
 	}
 

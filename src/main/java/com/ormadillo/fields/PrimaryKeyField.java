@@ -23,6 +23,10 @@ public class PrimaryKeyField {
 		return field.getName();
 	}
 	
+	public void setAccessible() {
+		field.setAccessible(true);
+	}
+	
 	// return the TYPE of the field that's annotated
 	public Class<?> getType() {
 		return field.getType();
@@ -31,6 +35,19 @@ public class PrimaryKeyField {
 	// get columnName() -=- extract the column name attribute from the column annotation
 	public String getColumnName() {
 		return field.getAnnotation(Id.class).columnName();
+	}
+	
+	public Object getValue(Object obj){
+		try {
+			return field.get(obj);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override

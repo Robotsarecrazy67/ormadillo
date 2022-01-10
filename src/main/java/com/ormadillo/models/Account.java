@@ -1,6 +1,7 @@
 package com.ormadillo.models;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 import com.ormadillo.annotations.Column;
@@ -20,7 +21,7 @@ public class Account implements Serializable{
 	@Id(columnName="acc_id")
 	private int id;
 	@Column(columnName="balance")
-    private double balance;
+    private BigDecimal balance;
 	@JoinColumn(columnName="acc_owner", notNull=true, references=User.class)
 	private int accOwner;
 	@Column(columnName="active", notNull=true, unique=false)
@@ -33,7 +34,7 @@ public class Account implements Serializable{
 	/*
 	 * Fully Parameterized Constructor
 	 */
-	public Account(int id, double balance, int accOwner, boolean pending) {
+	public Account(int id, BigDecimal balance, int accOwner, boolean pending) {
 		super();
 		this.id = id;
 		this.balance = balance;
@@ -42,7 +43,7 @@ public class Account implements Serializable{
 	}
 	
 	// DB will create ID for us!
-	public Account(double balance, int accOwner, boolean active) {
+	public Account(BigDecimal balance, int accOwner, boolean active) {
 		super();
 		this.balance = balance;
 		this.accOwner = accOwner;
@@ -65,11 +66,11 @@ public class Account implements Serializable{
 		this.id = id;
 	}
 
-	public double getBalance() {
+	public BigDecimal getBalance() {
 		return balance;
 	}
 
-	public void setBalance(double balance) {
+	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
 	}
 
@@ -96,7 +97,7 @@ public class Account implements Serializable{
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(accOwner, balance, id, active);
+		return Objects.hash(accOwner, active, balance, id);
 	}
 
 	@Override
@@ -108,14 +109,7 @@ public class Account implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		Account other = (Account) obj;
-		return accOwner == other.accOwner && Double.doubleToLongBits(balance) == Double.doubleToLongBits(other.balance)
-				&& id == other.id && active == other.active;
+		return accOwner == other.accOwner && active == other.active && Objects.equals(balance, other.balance)
+				&& id == other.id;
 	}
-
-	
-	
-	
-	
-	
-
 }
